@@ -5,18 +5,19 @@ const App = () => {
   const [items, setItems] = React.useState([]);
   const [isPending, startTransition] = React.useTransition();
 
-  const search = (event) => {
+  const search = async (event) => {
     const { value } = event.target;
     setInput(value);
+    const result = await getItems(value);
     startTransition(() => {
-      getItems();
+      setItems(result);
     });
   };
 
-  const getItems = async () => {
-    const res = await fetch(`https://demo.dataverse.org/api/search?q=${input}`);
+  const getItems = async (value) => {
+    const res = await fetch(`https://demo.dataverse.org/api/search?q=${value}`);
     const result = await res.json();
-    setItems(result.data.items);
+    return result.data.items;
   };
   return (
     <div>
