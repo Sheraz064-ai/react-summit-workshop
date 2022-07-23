@@ -21,8 +21,12 @@ function App() {
       setSubtractionCount(subtractionCount - 1);
       console.log("callback fetch");
     });
-    setLoading(false);
-    console.log("unset loading");
+    // setLoading(false);
+    // console.log("unset loading");
+    setTimeout(() => {
+      setLoading(false);
+      console.log("unset loading");
+    });
   };
 
   return (
