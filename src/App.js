@@ -1,56 +1,39 @@
-import { useState } from "react";
-import "./App.css";
+import React from "react";
 
-function App() {
-  const [additionCount, setAdditionCount] = useState(0);
-  const [subtractionCount, setSubtractionCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+const App = () => {
+  const [input, setInput] = React.useState("");
+  const [items, setItems] = React.useState([]);
+  const [isPending, startTransition] = React.useTransition();
 
-  console.log("Component Rendering");
-
-  // const handleOnClick = () => {
-  //   setAdditionCount(additionCount + 1);
-  //   setSubtractionCount(subtractionCount - 1);
-  // };
-
-  const handleOnClickAsync = async () => {
-    setLoading(true);
-    console.log("set loading");
-    await fetch("https://jsonplaceholder.typicode.com/todos/1").then(() => {
-      setAdditionCount(additionCount + 1);
-      setSubtractionCount(subtractionCount - 1);
-      console.log("callback fetch");
-    });
-    // setLoading(false);
-    // console.log("unset loading");
-    setTimeout(() => {
-      setLoading(false);
-      console.log("unset loading");
+  const search = (event) => {
+    const { value } = event.target;
+    setInput(value);
+    startTransition(() => {
+      getItems();
     });
   };
 
+  const getItems = async () => {
+    const res = await fetch(`https://demo.dataverse.org/api/search?q=${input}`);
+    const result = await res.json();
+    setItems(result.data.items);
+  };
   return (
     <div>
-      <button
-        style={{ width: "50%", height: "30%" }}
-        onClick={() => {
-          // handleOnClick();
-          handleOnClickAsync();
-        }}
-      >
-        Click Me!
-      </button>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {" "}
-          <div>Add Count: {additionCount}</div>﻿
-          <div>Substraction Count: {subtractionCount}</div>
-        </>
-      )}
+      <h1>Start Transition Example</h1>
+      <input value={input} onChange={search} />
+      <p>{isPending ? "Searching..." : ""}</p>
+      <div>
+        {items.map((item) => {
+          return (
+            <div>
+              <p>{item.name}</p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
